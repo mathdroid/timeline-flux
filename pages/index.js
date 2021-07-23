@@ -55,7 +55,10 @@ const Datacard = ({ title, data, count }) => {
         </Stack>
         <Sparklines
           color="black"
-          data={data.tweetsByMinute.map((arr) => arr.length)}
+          data={data.tweetsByMinute
+            .map((arr) => arr.length)
+            .slice()
+            .reverse()}
         >
           <SparklinesBars color="black" />
         </Sparklines>
