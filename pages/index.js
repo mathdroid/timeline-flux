@@ -11,6 +11,7 @@ import {
   Flex,
 } from "@chakra-ui/react";
 import { useState } from "react";
+import { Sparklines, SparklinesBars, SparklinesLine } from "react-sparklines";
 
 const getTweetCount = (tweetsByMinute) => {
   return tweetsByMinute.reduce((previous, current) => {
@@ -26,8 +27,10 @@ const Datacard = ({ title, data, count }) => {
   const previousCount = getTweetCount(previousTweets);
   const delta = currentCount - previousCount;
   const users = new Set();
-  for (const tweet of currentTweets) {
-    users.add(tweet.user_id);
+  for (const tweets of currentTweets) {
+    for (const tweetId of tweets) {
+      users.add(data.tweets[tweetId].user_id);
+    }
   }
 
   return (
@@ -36,13 +39,27 @@ const Datacard = ({ title, data, count }) => {
         {title}
         {isComplete ? "" : " (incomplete data)"}
       </Text>
-      <Stack mt="0.5rem" direction="row" alignItems="center">
-        <Heading>{currentCount}</Heading>
-        <Text as="span">
-          ({delta > 0 ? "+" : "-"}
-          {delta})
-        </Text>
-      </Stack>
+      <Flex direction="row" justifyContent="space-between">
+        <Stack
+          flexGrow={1}
+          mt="0.5rem"
+          mr="2rem"
+          direction="row"
+          alignItems="center"
+        >
+          <Heading>{currentCount}</Heading>
+          <Text as="span">
+            ({delta > 0 ? "+" : ""}
+            {delta})
+          </Text>
+        </Stack>
+        <Sparklines
+          color="black"
+          data={data.tweetsByMinute.map((arr) => arr.length)}
+        >
+          <SparklinesBars color="black" />
+        </Sparklines>
+      </Flex>
       <Text fontSize="sm">
         tweets from{" "}
         <Text as="span" fontWeight="bold">
